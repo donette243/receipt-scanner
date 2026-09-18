@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="ReceiptScan — интеллектуальное распознавание и категоризация кассовых чеков"
+    >
+
+    <title>ReceiptScan — Сканер чеков</title>
+
+    <link
+        rel="stylesheet"
+        href="/static/style.css"
+    >
+</head>
+
+<body>
+
+    <!-- ================= NAVIGATION ================= -->
+
+    <nav class="navbar">
+
+        <div class="nav-container">
+
+            <a
+                href="/"
+                class="brand"
+            >
+                <span class="brand-icon">R</span>
+
+                <span class="brand-text">
+                    Receipt<span>Scan</span>
+                </span>
+            </a>
+
+
+            <div class="nav-links">
+
+                <a href="#scanner">
+                    Сканер
+                </a>
+
+                <a href="#historySection">
+                    История
+                </a>
+
+                <a href="#statisticsSection">
+                    Статистика
+                </a>
+
+                <a
+                    href="/docs"
+                    class="api-link"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    API
+                </a>
+
+            </div>
+
+        </div>
+
+    </nav>
+
+
+    <main class="container">
+
+
+        <!-- ================= HERO ================= -->
+
+        <section class="hero">
+
+            <div class="hero-badge">
+                <span class="hero-badge-dot"></span>
+                OCR · FastAPI · MySQL
+            </div>
+
+            <h1>
+                Умный сканер
+                <span>кассовых чеков</span>
+            </h1>
+
+            <p>
+                Загрузите фотографию чека —
+                приложение автоматически распознает
+                магазин, дату, сумму, товары
+                и распределит покупки по категориям.
+            </p>
+
+        </section>
+
+
+        <!-- ================= SCANNER ================= -->
+
+        <section
+            id="scanner"
+            class="card scanner-card"
+        >
+
+            <div class="card-heading">
+
+                <div class="heading-icon">
+                    📷
+                </div>
+
+                <div>
+                    <h2>Сканировать чек</h2>
+
+                    <p>
+                        Загрузите фотографию кассового чека
+                    </p>
+                </div>
+
+            </div>
+
+
+            <form id="receiptForm">
+
+                <label
+                    for="file"
+                    id="dropZone"
+                    class="upload-zone"
+                >
+
+                    <div class="upload-icon">
+                        <svg
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                        >
+                            <path
+                                d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5M5 13v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5"
+                            />
+                        </svg>
+                    </div>
+
+                    <strong>
+                        Перетащите чек сюда
+                    </strong>
+
+                    <span class="upload-or">
+                        или
+                    </span>
+
+                    <span class="choose-file-button">
+                        Выбрать файл
+                    </span>
+
+                    <small>
+                        JPG, JPEG или PNG
+                    </small>
+
+                </label>
+
+
+                <input
+                    id="file"
+                    class="file-input"
+                    type="file"
+                    accept="image/*"
+                    capture="environment"
+                    required
+                >
+
+
+                <div
+                    id="previewContainer"
+                    class="preview-container"
+                    hidden
+                >
+
+                    <div class="preview-header">
+
+                        <div>
+                            <span class="preview-check">✓</span>
+                            <strong>Изображение выбрано</strong>
+                        </div>
+
+                        <button
+                            id="removePreviewButton"
+                            type="button"
+                            class="icon-button"
+                            aria-label="Удалить изображение"
+                            title="Удалить изображение"
+                        >
+                            ×
+                        </button>
+
+                    </div>
+
+
+                    <div class="preview-image-wrapper">
+
+                        <img
+                            id="preview"
+                            alt="Предварительный просмотр чека"
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    id="scanButton"
+                    type="submit"
+                    class="scan-button"
+                >
+                    <span class="scan-button-icon">
+                        ✦
+                    </span>
+
+                    <span>
+                        Сканировать чек
+                    </span>
+                </button>
+
+            </form>
+
+
+            <div
+                id="status"
+                class="status"
+                aria-live="polite"
+            ></div>
+
+        </section>
+
+
+        <!-- ================= RESULT ================= -->
+
+        <section
+            id="resultSection"
+            class="card result-card"
+            hidden
+        >
+
+            <div class="card-heading">
+
+                <div class="heading-icon success-icon">
+                    ✓
+                </div>
+
+                <div>
+                    <h2>
+                        Результат сканирования
+                    </h2>
+
+                    <p>
+                        Данные, распознанные на чеке
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div id="receiptResult"></div>
+
+        </section>
+
+
+        <!-- ================= STATISTICS ================= -->
+
+        <section
+            id="statisticsSection"
+            class="card"
+        >
+
+            <div class="card-heading">
+
+                <div class="heading-icon">
+                    ◫
+                </div>
+
+                <div>
+                    <h2>
+                        Статистика расходов
+                    </h2>
+
+                    <p>
+                        Анализ сохранённых чеков
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div id="statistics">
+                <div class="loading-placeholder">
+                    Загрузка статистики...
+                </div>
+            </div>
+
+        </section>
+
+
+        <!-- ================= HISTORY ================= -->
+
+        <section
+            id="historySection"
+            class="card"
+        >
+
+            <div class="section-header">
+
+                <div class="card-heading">
+
+                    <div class="heading-icon">
+                        ◷
+                    </div>
+
+                    <div>
+                        <h2>
+                            История чеков
+                        </h2>
+
+                        <p>
+                            Все ранее отсканированные чеки
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <button
+                    id="refreshButton"
+                    type="button"
+                    class="refresh-button"
+                >
+                    <span>↻</span>
+                    Обновить
+                </button>
+
+            </div>
+
+
+            <div id="history">
+
+                <div class="loading-placeholder">
+                    Загрузка истории...
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= TECHNOLOGIES ================= -->
+
+        <section class="technology-section">
+
+            <p>
+                Технологии проекта
+            </p>
+
+            <div class="technology-list">
+
+                <span>FastAPI</span>
+                <span>Python</span>
+                <span>MySQL</span>
+                <span>Tesseract OCR</span>
+                <span>OpenCV</span>
+                <span>JavaScript</span>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- ================= FOOTER ================= -->
+
+    <footer>
+
+        <div class="footer-content">
+
+            <div class="footer-brand">
+                <span class="brand-icon small">R</span>
+
+                <strong>
+                    ReceiptScan
+                </strong>
+            </div>
+
+
+            <p>
+                Интеллектуальное распознавание кассовых чеков
+            </p>
+
+
+            <a
+                href="/docs"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                API Documentation →
+            </a>
+
+        </div>
+
+    </footer>
+
+
+    <script src="/static/app.js"></script>
+
+</body>
+
+</html>
