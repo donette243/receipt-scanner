@@ -29,9 +29,9 @@ app = FastAPI(
     title=settings.APP_NAME,
     version="1.0.0",
     description=(
-        "Application intelligente "
-        "de scan et catégorisation "
-        "de reçus."
+        "Приложение для сканирования чеков, "
+        "распознавания данных и "
+        "категоризации покупок"
     ),
 )
 
@@ -42,6 +42,7 @@ app.include_router(
 app.include_router(
     statistics_router
 )
+
 if STATIC_DIR.exists():
     app.mount(
         "/static",
@@ -74,6 +75,12 @@ def home():
         "status": "running",
     }
 
-@app.get("/health", tags=["Health"])
+
+@app.get(
+    "/health",
+    tags=["Состояние"],
+)
 def health():
-    return {"status": "ok"}
+    return {
+        "status": "ok"
+    }
