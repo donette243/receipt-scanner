@@ -13,3 +13,5 @@ pytesseract==0.3.13
 Pillow==11.3.0
 pytest==9.0.2
 pytest-cov==7.1.0
+httpx2==2.13.1
+openai==3.19.2

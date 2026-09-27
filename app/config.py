@@ -13,9 +13,10 @@ class Settings:
         "APP_NAME",
         "Receipt Scanner",
     )
+
     DATABASE_URL = os.getenv(
         "DATABASE_URL",
-        "mysql+pymysql://root:password@localhost:3306/receipt_scanner",
+        "mysql+pymysql://root:password@localhost:3306/receiptscanner",
     )
 
     UPLOAD_DIR = os.getenv(
@@ -23,7 +24,6 @@ class Settings:
         str(BASE_DIR / "uploads"),
     )
 
-    # OCR pour les reçus russes, anglais et français.
     OCR_LANG = os.getenv(
         "OCR_LANG",
         "rus+eng+fra",

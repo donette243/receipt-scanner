@@ -4,7 +4,7 @@ import unicodedata
 
 CATEGORIES = {
     "food": [
-        # English / French
+       
         "milk", "lait",
         "bread", "pain",
         "rice", "riz",
@@ -41,8 +41,6 @@ CATEGORIES = {
         "tarte",
         "glace", "ice cream",
         "chocolat", "chocolate",
-
-        # Russian
         "молоко",
         "хлеб",
         "рис",
@@ -77,7 +75,7 @@ CATEGORIES = {
     ],
 
     "beverages": [
-        # English / French
+        
         "water", "eau",
         "badoit",
         "evian",
@@ -111,7 +109,6 @@ CATEGORIES = {
         "spritz",
         "mojito",
 
-        # Russian
         "вода",
         "сок",
         "кофе",
@@ -130,7 +127,7 @@ CATEGORIES = {
     ],
 
     "hygiene": [
-        # English / French
+        
         "shampoo", "shampoing",
         "soap", "savon",
         "toothpaste", "dentifrice",
@@ -145,8 +142,6 @@ CATEGORIES = {
         "tampon",
         "serviette hygienique",
         "serviette hygiénique",
-
-        # Russian
         "шампунь",
         "мыло",
         "зубная паста",
@@ -160,7 +155,7 @@ CATEGORIES = {
     ],
 
     "clothing": [
-        # English / French
+       
         "shirt", "chemise",
         "t-shirt", "tee shirt",
         "pants", "pantalon",
@@ -174,7 +169,6 @@ CATEGORIES = {
         "sweater",
         "pull", "pull-over",
 
-        # Russian
         "рубашка",
         "футболка",
         "брюки",
@@ -189,7 +183,7 @@ CATEGORIES = {
     ],
 
     "electronics": [
-        # English / French
+        
         "phone",
         "telephone", "téléphone",
         "computer", "ordinateur",
@@ -208,8 +202,6 @@ CATEGORIES = {
         "iphone",
         "android",
         "tablet", "tablette",
-
-        # Russian
         "телефон",
         "смартфон",
         "компьютер",
@@ -225,7 +217,7 @@ CATEGORIES = {
     ],
 
     "transport": [
-        # English / French
+        
         "metro", "métro",
         "bus",
         "train",
@@ -240,8 +232,6 @@ CATEGORIES = {
         "ticket transport",
         "transport",
         "peage", "péage",
-
-        # Russian
         "метро",
         "автобус",
         "поезд",
@@ -255,7 +245,7 @@ CATEGORIES = {
     ],
 
     "medicine": [
-        # English / French
+        
         "medicine",
         "medicament", "médicament",
         "vitamin", "vitamine",
@@ -266,7 +256,6 @@ CATEGORIES = {
         "aspirin", "aspirine",
         "antibiotic", "antibiotique",
 
-        # Russian
         "лекарство",
         "лекарства",
         "витамин",
@@ -279,7 +268,7 @@ CATEGORIES = {
     ],
 
     "restaurant": [
-        # English / French
+        
         "restaurant",
         "restauration",
         "delivery",
@@ -293,7 +282,6 @@ CATEGORIES = {
         "kfc",
         "subway",
 
-        # Russian
         "ресторан",
         "кафе",
         "доставка",

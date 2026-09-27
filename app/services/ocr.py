@@ -22,7 +22,6 @@ def _get_available_languages() -> set[str]:
 
 
 def _validate_ocr_languages() -> None:
- 
     requested = {
         language.strip()
         for language in settings.OCR_LANG.split("+")
@@ -42,15 +41,14 @@ def _validate_ocr_languages() -> None:
         )
 
         raise RuntimeError(
-            "Langue(s) Tesseract manquante(s) : "
+            "Отсутствуют языковые данные Tesseract: "
             f"{missing_text}. "
-            "Installe les fichiers traineddata "
-            "correspondants ou modifie OCR_LANG."
+            "Установите соответствующие файлы traineddata "
+            "или измените OCR_LANG."
         )
 
 
 def extract_text(image_path: str) -> str:
-
     _validate_ocr_languages()
 
     try:
@@ -62,14 +60,13 @@ def extract_text(image_path: str) -> str:
 
     except pytesseract.TesseractNotFoundError as exc:
         raise RuntimeError(
-            "Tesseract OCR n'est pas installé "
-            "ou son chemin n'est pas configuré."
+            "Tesseract OCR не установлен "
+            "или путь к нему не настроен."
         ) from exc
 
     except pytesseract.TesseractError as exc:
         raise RuntimeError(
-            "Erreur pendant l'exécution de "
-            "Tesseract OCR."
+            "Ошибка при выполнении Tesseract OCR."
         ) from exc
 
     return text.strip()

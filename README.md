@@ -153,47 +153,127 @@ LLM может использоваться как дополнительный 
 
 Это означает, что в некоторых случаях сумма распознанных позиций может отличаться от итоговой суммы чека.
 
-# Запуск проекта с нуля
+# Запуск проекта с нуля на новом компьютере Windows
 
-## 1. Клонирование репозитория
+Эта инструкция рассчитана в том числе на пользователя, который раньше не работал с Git, Python, MySQL или Tesseract. Проект проверен на Windows с Python 3.13. С текущими зафиксированными зависимостями не используйте Python 3.14.
+
+## 1. Создание папки и открытие PowerShell
+
+Откройте Проводник Windows → `Documents` и создайте папку, например:
+
+```text
+ReceiptScanner-Test
+```
+
+Пример полного пути:
+
+```text
+C:\Users\USERNAME\Documents\ReceiptScanner-Test
+```
+
+`USERNAME` замените на имя пользователя Windows. Папку `receipt-scanner` внутри вручную создавать не нужно — Git создаст её сам.
+
+Откройте `ReceiptScanner-Test`, нажмите на адресную строку Проводника, введите:
+
+```text
+powershell
+```
+
+и нажмите `Enter`. PowerShell должен открыться в этой папке:
+
+```text
+PS C:\Users\USERNAME\Documents\ReceiptScanner-Test>
+```
+
+Все следующие команды вводятся в PowerShell, если явно не указано другое.
+
+## 2. Проверка Git
+
+```powershell
+git --version
+```
+
+Если Git не найден, установите Git for Windows: `https://git-scm.com/download/win`. После установки закройте PowerShell, снова откройте его из папки `ReceiptScanner-Test` и повторите `git --version`.
+
+## 3. Клонирование проекта
 
 ```powershell
 git clone https://github.com/donette243/receipt-scanner.git
 cd receipt-scanner
 ```
 
-## 2. Создание виртуального окружения
-
-Для Windows:
-
-```powershell
-python -m venv .venv
-```
-
-Активация:
-
-```powershell
-.venv\Scripts\Activate.ps1
-```
-
-После активации в начале строки PowerShell должно появиться:
+После `cd` путь должен оканчиваться на:
 
 ```text
-(.venv)
+...\ReceiptScanner-Test\receipt-scanner>
 ```
 
-## 3. Установка зависимостей
+Все следующие команды выполняйте из корня `receipt-scanner`.
+
+## 4. Python 3.13 — проверить до создания `.venv`
+
+Проверьте установленные версии:
+
+```powershell
+py -0p
+```
+
+Проект проверен с Python 3.13.15. Если Python 3.13 уже установлен:
+
+```powershell
+py -3.13 --version
+```
+
+Если Python 3.13 отсутствует, но команда `py` работает:
+
+```powershell
+py install 3.13
+py -3.13 --version
+```
+
+Если `py` не найден, установите Python 3.13 с `https://www.python.org/downloads/`, затем откройте новый PowerShell и снова проверьте `py -3.13 --version`.
+
+> Важно: на чистом компьютере Python 3.14 с текущим `numpy==2.2.6` приводил к ошибке при загрузке NumPy/OpenCV. Поэтому `.venv` создаётся явно через Python 3.13.
+
+## 5. Создание и активация виртуального окружения
+
+```powershell
+py -3.13 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python --version
+```
+
+После активации строка должна начинаться с `(.venv)`, а `python --version` должен показывать Python 3.13.x.
+
+Если PowerShell запрещает запуск `Activate.ps1`:
+
+```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+.\.venv\Scripts\Activate.ps1
+```
+
+`-Scope Process` изменяет политику только для текущего окна PowerShell.
+
+Если `Activate.ps1` не найден, `.venv` не был создан. Сначала выполните `py -3.13 -m venv .venv`.
+
+## 6. Установка Python-зависимостей
+
+Убедитесь, что слева есть `(.venv)`, затем:
 
 ```powershell
 python -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-## 4. Настройка MySQL
+Дождитесь полного завершения установки. `requirements.txt` содержит все Python-зависимости проекта, включая зависимости для API-тестов и опциональной LLM-категоризации.
 
-Для работы приложения необходим MySQL.
+## 7. MySQL
 
-Создайте базу данных:
+Приложению нужен MySQL Server. Если MySQL не установлен, используйте официальный MySQL Installer for Windows: `https://dev.mysql.com/downloads/installer/`. При установке оставьте стандартный порт `3306` и сохраните пароль MySQL.
+
+Если MySQL уже установлен, повторная установка не нужна. Даже если `mysql --version` в PowerShell не распознаётся, сервер может быть установлен, но не добавлен в `PATH`. В таком случае используйте MySQL Workbench или MySQL Command Line Client.
+
+Подключитесь к локальному серверу и выполните:
 
 ```sql
 CREATE DATABASE receiptscanner
@@ -201,43 +281,41 @@ CHARACTER SET utf8mb4
 COLLATE utf8mb4_unicode_ci;
 ```
 
-Проверить наличие базы можно командой:
+Проверьте:
 
 ```sql
 SHOW DATABASES;
 ```
 
-В списке должна присутствовать база:
+В списке должна быть `receiptscanner`. Если она уже существует, повторно создавать её не нужно.
+
+## 8. Tesseract OCR и языки
+
+`pytesseract` — Python-обёртка; сам Tesseract OCR устанавливается отдельно. Для Windows можно использовать сборку UB Mannheim: `https://github.com/UB-Mannheim/tesseract/wiki`.
+
+Установите 64-битную версию. Стандартный путь обычно:
 
 ```text
-receiptscanner
+C:\Program Files\Tesseract-OCR\tesseract.exe
 ```
 
-## 5. Установка Tesseract OCR
+Во время установки обязательно добавьте языковые данные **English, French и Russian**. Проект использует `eng+fra+rus`.
 
-Приложение использует Tesseract OCR для распознавания текста на изображениях чеков.
-
-Необходимо установить языковые данные:
-
-```text
-rus
-eng
-fra
-```
-
-Проверить установленную версию:
+Если команда доступна через PATH:
 
 ```powershell
 tesseract --version
-```
-
-Проверить доступные языки:
-
-```powershell
 tesseract --list-langs
 ```
 
-В списке должны присутствовать:
+Если `tesseract` не распознаётся, это не означает, что программа не установлена. Используйте полный путь:
+
+```powershell
+& "C:\Program Files\Tesseract-OCR\tesseract.exe" --version
+& "C:\Program Files\Tesseract-OCR\tesseract.exe" --list-langs
+```
+
+В списке должны быть как минимум:
 
 ```text
 eng
@@ -245,85 +323,156 @@ fra
 rus
 ```
 
-Если команда `tesseract` недоступна через PATH, путь к исполняемому файлу можно указать через `TESSERACT_CMD` в `.env`.
+Если видны только `eng` и `osd`, повторно запустите установщик Tesseract, откройте выбор дополнительных языковых данных и добавьте French и Russian, затем снова выполните `--list-langs`.
+
+## 9. Windows N: обязательный Media Feature Pack для OpenCV
+
+Проверьте редакцию Windows:
+
+```powershell
+winver
+```
+
+Если указано `Windows 10/11 ... N` (например, `Windows 11 Pro N`), OpenCV может завершаться ошибкой:
+
+```text
+ImportError: DLL load failed while importing cv2
+```
+
+Откройте `Параметры → Приложения → Дополнительные компоненты`, нажмите `Просмотреть компоненты`, найдите `Media Feature Pack`, установите его и **перезагрузите компьютер**.
+
+После перезагрузки снова откройте PowerShell в папке проекта:
+
+```powershell
+.\.venv\Scripts\Activate.ps1
+python -c "import cv2; print(cv2.__version__)"
+```
+
+Для текущей версии проекта ожидается `4.12.0`.
+
+Если Windows не является редакцией N, этот шаг обычно не требуется.
+
+Если DLL-ошибка OpenCV остаётся на обычной Windows, проверьте Microsoft Visual C++ Redistributable x64: `https://aka.ms/vs/17/release/vc_redist.x64.exe`, после установки перезагрузите Windows и повторите тест `import cv2`.
+
+## 10. Создание `.env`
+
+Шаблон `.env.example` уже находится в репозитории. Создайте локальный `.env` автоматически:
+
+```powershell
+Copy-Item .env.example .env
+notepad .env
+```
 
 Пример:
 
 ```env
-TESSERACT_CMD=C:\Program Files\Tesseract-OCR\tesseract.exe
-```
-
-## 6. Настройка переменных окружения
-
-В репозитории находится файл:
-
-```text
-.env.example
-```
-
-Создайте локальный `.env`:
-
-```powershell
-Copy-Item .env.example .env
-```
-
-Укажите в `.env` параметры своей базы данных:
-
-```env
-DATABASE_URL=mysql+pymysql://username:password@localhost:3306/receiptscanner
+DATABASE_URL=mysql+pymysql://root:YOUR_MYSQL_PASSWORD@localhost:3306/receiptscanner
 
 OCR_LANG=rus+eng+fra
-TESSERACT_CMD=
+TESSERACT_CMD=C:\Program Files\Tesseract-OCR\tesseract.exe
 
 LLM_ENABLED=false
 OPENAI_API_KEY=
 ```
 
-Замените `username` и `password` на данные своего пользователя MySQL.
+Замените `YOUR_MYSQL_PASSWORD` на свой пароль MySQL. Если используется другой пользователь, замените и `root`. Не отправляйте пароль другим людям и не публикуйте `.env`.
 
-Файл `.env` содержит локальные настройки и возможные секретные данные, поэтому он исключён из Git.
+Явный `TESSERACT_CMD` рекомендуется оставить даже тогда, когда Tesseract не добавлен в Windows PATH.
 
-## 7. Применение миграций
+Если пароль MySQL содержит специальные URL-символы (`@`, `:`, `/`, `#`, `%` и т. п.), строка подключения может требовать URL-кодирования.
 
-После создания базы данных и настройки `.env` выполните:
+Сохраните файл (`Ctrl+S`) и закройте Блокнот.
+
+## 11. Миграции базы данных
+
+Убедитесь, что MySQL запущен, база `receiptscanner` существует, `.env` заполнен и `(.venv)` активно. Затем:
 
 ```powershell
 alembic upgrade head
 ```
 
-Alembic создаст необходимые таблицы в базе данных.
+Alembic создаст необходимые таблицы. `Access denied` обычно означает неверные данные MySQL в `DATABASE_URL`; `Unknown database 'receiptscanner'` — база ещё не создана.
 
-## 8. Запуск приложения
+## 12. Запуск приложения
 
 ```powershell
 uvicorn app.main:app --reload
 ```
 
-После успешного запуска приложение будет доступно по адресу:
+Успешный запуск содержит:
+
+```text
+Uvicorn running on http://127.0.0.1:8000
+Application startup complete.
+```
+
+Не закрывайте PowerShell во время работы приложения. Откройте в браузере:
 
 ```text
 http://127.0.0.1:8000
 ```
 
-## 9. Проверка backend
-
-Health endpoint:
+Health-check:
 
 ```text
 http://127.0.0.1:8000/health
 ```
 
-Ожидаемый ответ:
+Ожидается:
 
 ```json
 {"status":"ok"}
 ```
 
-Документация REST API:
+Swagger UI:
 
 ```text
 http://127.0.0.1:8000/docs
 ```
+
+Для остановки сервера нажмите `Ctrl+C`. Запрос `/favicon.ico` с ответом `404` не влияет на работу приложения.
+
+## 13. Проверка реального чека
+
+На главной странице загрузите изображение кассового чека и запустите распознавание. Проверьте результат, историю и статистику. Успешный `POST /receipts/scan` с `200 OK` означает, что полный pipeline frontend → OpenCV → Tesseract → parser → MySQL работает.
+
+## 14. Автоматические тесты
+
+Остановите Uvicorn через `Ctrl+C`, затем:
+
+```powershell
+pytest
+```
+
+На основной проверенной конфигурации:
+
+```text
+63 passed
+```
+
+Для отчёта о покрытии:
+
+```powershell
+pytest --cov=app --cov-report=term-missing
+```
+
+## Быстрое устранение проблем установки
+
+| Ошибка | Что делать |
+|---|---|
+| `git` не распознаётся | Установить Git for Windows и открыть новый PowerShell. |
+| `No runtime installed that matches 3.13` | `py install 3.13`, затем `py -3.13 --version`. |
+| `Activate.ps1` не найден | Сначала создать окружение: `py -3.13 -m venv .venv`. |
+| PowerShell запрещает `Activate.ps1` | `Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass`. |
+| NumPy/OpenCV падает на Python 3.14 | Удалить `.venv`, установить Python 3.13 и создать окружение через `py -3.13 -m venv .venv`. |
+| `mysql` не распознаётся | Использовать MySQL Workbench/Command Line Client; MySQL может просто отсутствовать в PATH. |
+| MySQL `Access denied` | Проверить пользователя и пароль в `DATABASE_URL`. |
+| `Unknown database 'receiptscanner'` | Создать базу `receiptscanner`. |
+| `tesseract` не распознаётся | Использовать полный путь и задать `TESSERACT_CMD` в `.env`. |
+| Есть только `eng` и `osd` | Повторно запустить установщик Tesseract и добавить French + Russian. |
+| `DLL load failed while importing cv2` на Windows N | Установить Media Feature Pack, перезагрузить Windows и проверить `import cv2`. |
+| `TestClient` требует `httpx2` | Выполнить актуальный `pip install -r requirements.txt`; зависимость уже включена в проект. |
+| `/favicon.ico` → `404` | Не является ошибкой приложения и не влияет на OCR/API. |
 
 # Использование
 
@@ -368,26 +517,6 @@ http://127.0.0.1:8000/docs
 
 ```text
 other
-```
-
-# Тестирование
-
-Запуск всех автоматических тестов:
-
-```powershell
-pytest
-```
-
-На момент последней локальной проверки:
-
-```text
-63 passed
-```
-
-Запуск тестов с отчётом о покрытии:
-
-```powershell
-pytest --cov=app --cov-report=term-missing
 ```
 
 # Ограничения OCR

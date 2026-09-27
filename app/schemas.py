@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class ReceiptItemResponse(BaseModel):
@@ -24,7 +24,9 @@ class ReceiptResponse(BaseModel):
     total: float | None = None
     raw_text: str | None = None
     created_at: datetime
-    items: list[ReceiptItemResponse] = []
+    items: list[ReceiptItemResponse] = Field(
+        default_factory=list,
+    )
 
     model_config = ConfigDict(
         from_attributes=True,
